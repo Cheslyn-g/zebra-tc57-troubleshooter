@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zebra TC57 Troubleshooter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      color: #333;
+    }
+    input, button {
+      padding: 0.5rem;
+      margin-top: 10px;
+      font-size: 1rem;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 1rem;
+      background: #fff;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Zebra TC57 Troubleshooting Assistant</h1>
+  <p>Type in your issue and click "Search" to get troubleshooting steps.</p>
+  <input type="text" id="issueInput" placeholder="e.g. device won't turn on" size="50" />
+  <button onclick="searchTroubleshooting()">Search</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    const troubleshootingSteps = {
+      "device won't turn on": "Check the battery, try a soft reset by holding the power button, or perform a hard reset (Power + Volume Down).",
+      "screen unresponsive": "Clean the screen, perform a force restart, or check for physical damage.",
+      "barcode scanner not working": "Ensure DataWedge is enabled, check barcode quality, and update scanner firmware if necessary.",
+      "wi-fi": "Reset network settings, toggle airplane mode, or reconnect to the network.",
+      "bluetooth": "Toggle airplane mode, forget and re-pair the device, or reset network settings.",
+      "slow": "Close unused apps, clear the cache, and uninstall unneeded applications.",
+      "charging": "Inspect the charging port, try a different cable or outlet, and check battery health."
+    };
+
+    function searchTroubleshooting() {
+      const userInput = document.getElementById("issueInput").value.toLowerCase();
+      const resultDiv = document.getElementById("result");
+      let found = false;
+
+      for (let key in troubleshootingSteps) {
+        if (userInput.includes(key)) {
+          resultDiv.innerHTML = `<strong>Solution:</strong> ${troubleshootingSteps[key]}`;
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        resultDiv.innerHTML = "Issue not recognized. Please try different keywords or contact Zebra support.";
+      }
+    }
+  </script>
+</body>
+</html>
