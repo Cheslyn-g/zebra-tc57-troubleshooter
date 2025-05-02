@@ -1,69 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Zebra TC57 Troubleshooter</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 2rem;
-      background-color: #f4f4f4;
-    }
-    h1 {
-      color: #333;
-    }
-    input, button {
-      padding: 0.5rem;
-      margin-top: 10px;
-      font-size: 1rem;
-    }
-    .result {
-      margin-top: 20px;
-      padding: 1rem;
-      background: #fff;
-      border: 1px solid #ccc;
-    }
-  </style>
-</head>
-<body>
-  <h1>Zebra TC57 Troubleshooting Assistant</h1>
-  <p>Type in your issue and click "Search" to get troubleshooting steps.</p>
-  <input type="text" id="issueInput" placeholder="e.g. device won't turn on" size="50" />
-  <button onclick="searchTroubleshooting()">Search</button>
+<script>
+  const userAnswers = [];
 
-  <div class="result" id="result"></div>
-
-  <script>
-    const troubleshootingSteps = {
-      "device won't turn on": "Check the battery, try a soft reset by holding the power button, or perform a hard reset (Power + Volume Down).",
-      "screen unresponsive": "Clean the screen, perform a force restart, or check for physical damage.",
-      "barcode scanner not working": "Ensure DataWedge is enabled, check barcode quality, and update scanner firmware if necessary.",
-      "wi-fi": "Reset network settings, toggle airplane mode, or reconnect to the network.",
-      "bluetooth": "Toggle airplane mode, forget and re-pair the device, or reset network settings.",
-      "slow": "Close unused apps, clear the cache, and uninstall unneeded applications.",
-      "charging": "Inspect the charging port, try a different cable or outlet, and check battery health.",
-      "phone is starting": "Swipe down to access settings from top, put in system pin if Afrox then pin: 699436, Go to reset options then Factory reset or Enterprise reset.",
-      "reset": "Insert SD card with reset code already on. Switch the device off, press and hold the power button and the top left scanning button until screen turns on then let go of the power button, select apply downgrade from SD card using power button. Apply enterprise reset and then factory reset and finally reboot system now. "
-    };
-
-    function searchTroubleshooting() {
-      const userInput = document.getElementById("issueInput").value.toLowerCase();
-      const resultDiv = document.getElementById("result");
-      let found = false;
-
-      for (let key in troubleshootingSteps) {
-        if (userInput.includes(key)) {
-          resultDiv.innerHTML = `<strong>Solution:</strong> ${troubleshootingSteps[key]}`;
-          found = true;
-          break;
-        }
-      }
-
-      if (!found) {
-        resultDiv.innerHTML = "Issue not recognized. Please try different keywords or contact Zebra support.";
-      }
+  const questions = {
+    start: {
+      text: "Is the printer turning on?",
+      options: [
+        { text: "Yes", next: "paperCheck" },
+        { text: "No", next: "powerIssue" }
+      ]
+    },
+    powerIssue: {
+      text: "Check the power cable. Is it plugged in?",
+      options: [
+        { text: "Yes", next: "callSupport" },
+        { text: "No", next: "plugIn" }
+      ]
+    },
+    plugIn: {
+      text: "Plug in the cable and try turning it on.",
+      options: []
+    },
+    paperCheck: {
+      text: "Is there paper loaded in the tray?",
+      options: [
+        { text: "Yes", next: "jamCheck" },
+        { text: "No", next: "loadPaper" }
+      ]
+    },
+    loadPaper: {
+      text: "Please load paper and try again.",
+      options: []
+    },
+    jamCheck: {
+      text: "Is there a paper jam?",
+      options: [
+        { text: "Yes", next: "clearJam" },
+        { text: "No", next: "callSupport" }
+      ]
+    },
+    clearJam: {
+      text: "Clear the jam and restart the printer.",
+      options: []
+    },
+    callSupport: {
+      text: "Please contact support for further assistance.",
+      options: []
     }
-  </script>
-</body>
-</html>
+  };
+
+  function renderQuestion(key) {
+    const container = document.getElementById("troubleshooting-container");
+    const q = questions[key];
+    userAnswers.push(q.text); // Log question
+    container.innerHTML = `<div class="question-box">
+      <p>${q.text}</p>
+      ${q.options.map(opt => `
+        <button onclick="userAnswers.push('Answer: ${opt.text}'); renderQuestion('${opt.next}')">
+          ${opt.text}
+        </button>`).join('')}
+      ${q.options.length === 0 ? `<br><button onclick="downloadLog()">Download My Instructions</button>` : ''}
+    </div>`;
+  }
+
+  function downloadLog() {
+    const blob = new Blob([userAnswers.join('\n')], { type: "text/plain" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "My_Troubleshooting_Log.txt";
+    link.click();
+  }
+
+  renderQuestion("start");
+</script>
