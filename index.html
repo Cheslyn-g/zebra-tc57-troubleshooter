@@ -1,68 +1,112 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Issue Input Form</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { motion, AnimatePresence } from "framer-motion";
 
-        form {
-            max-width: 600px;
-            margin: auto;
-        }
+const issues = [
+  {
+    id: 1,
+    title: "Can't connect to Wi-Fi",
+    steps: [
+      "Check if your Wi-Fi is turned on",
+      "Restart your router",
+      "Forget and reconnect to the network",
+      "Check your device's network settings"
+    ]
+  },
+  {
+    id: 2,
+    title: "Computer running slow",
+    steps: [
+      "Close unused applications",
+      "Restart your computer",
+      "Check for malware",
+      "Free up disk space"
+    ]
+  },
+  {
+    id: 3,
+    title: "Printer not working",
+    steps: [
+      "Check power and cable connections",
+      "Restart the printer",
+      "Update or reinstall printer drivers",
+      "Ensure it's set as default printer"
+    ]
+  }
+];
 
-        label {
-            display: block;
-            margin: 10px 0 5px;
-        }
+export default function TroubleshootingApp() {
+  const [query, setQuery] = useState("");
+  const [selectedIssue, setSelectedIssue] = useState(null);
 
-        textarea {
-            width: 100%;
-            height: 100px;
-        }
+  const filteredIssues = issues.filter(issue =>
+    issue.title.toLowerCase().includes(query.toLowerCase())
+  );
 
-        button {
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-200 p-6">
+      <div className="max-w-3xl mx-auto">
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-4xl font-bold mb-6 text-center"
+        >
+          Troubleshooting Assistant
+        </motion.h1>
 
-<h2>Report an Issue</h2>
-<form id="issueForm">
-    <label for="issueTitle">Issue Title:</label>
-    <input type="text" id="issueTitle" name="issueTitle" required>
+        <Input
+          placeholder="Search your issue..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="mb-6"
+        />
 
-    <label for="issueDescription">Issue Description:</label>
-    <textarea id="issueDescription" name="issueDescription" required></textarea>
+        <div className="grid gap-4">
+          {filteredIssues.map((issue) => (
+            <motion.div
+              key={issue.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Card
+                className="cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={() => setSelectedIssue(issue)}
+              >
+                <CardContent className="p-4">
+                  <h2 className="text-xl font-semibold">{issue.title}</h2>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
 
-    <button type="submit">Submit Issue</button>
-</form>
-
-<div id="feedback"></div>
-
-<script>
-    document.getElementById('issueForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const title = document.getElementById('issueTitle').value;
-        const description = document.getElementById('issueDescription').value;
-
-        // Here you can process the input data as needed
-        console.log('Issue Title:', title);
-        console.log('Issue Description:', description);
-
-        // For example, send this data to a server or display a confirmation message
-        document.getElementById('feedback').innerHTML = `<p>Thank you for reporting: <strong>${title}</strong></p>`;
-        
-        // Reset the form
-        this.reset();
-    });
-</script>
-
-</body>
-</html>
+        <AnimatePresence>
+          {selectedIssue && (
+            <motion.div
+              key="details"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.4 }}
+              className="mt-8 p-6 bg-white rounded-2xl shadow-lg"
+            >
+              <h3 className="text-2xl font-bold mb-4">{selectedIssue.title}</h3>
+              <ul className="list-disc list-inside space-y-2">
+                {selectedIssue.steps.map((step, index) => (
+                  <li key={index}>{step}</li>
+                ))}
+              </ul>
+              <Button className="mt-4" onClick={() => setSelectedIssue(null)}>
+                Back to list
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
