@@ -3,109 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Troubleshooting 3D Effects</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Issue Input Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+        }
+
+        button {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Interactive Troubleshooting</h1>
-        <nav>
-            <ul>
-                <li><a href="#issue1">Issue 1</a></li>
-                <li><a href="#issue2">Issue 2</a></li>
-                <li><a href="#issue3">Issue 3</a></li>
-            </ul>
-        </nav>
-    </header>
-    
-    <main>
-        <section id="3d-scene"></section>
-        <section id="troubleshooting-content">
-            <h2>Select an Issue</h2>
-            <div class="issue" id="issue1">
-                <h3>Issue 1</h3>
-                <p>Details about Issue 1...</p>
-            </div>
-            <div class="issue" id="issue2">
-                <h3>Issue 2</h3>
-                <p>Details about Issue 2...</p>
-            </div>
-            <div class="issue" id="issue3">
-                <h3>Issue 3</h3>
-                <p>Details about Issue 3...</p>
-            </div>
-        </section>
-    </main>
 
-    <script src="https://threejs.org/build/three.js"></script>
-    <script src="script.js"></script>
+<h2>Report an Issue</h2>
+<form id="issueForm">
+    <label for="issueTitle">Issue Title:</label>
+    <input type="text" id="issueTitle" name="issueTitle" required>
+
+    <label for="issueDescription">Issue Description:</label>
+    <textarea id="issueDescription" name="issueDescription" required></textarea>
+
+    <button type="submit">Submit Issue</button>
+</form>
+
+<div id="feedback"></div>
+
+<script>
+    document.getElementById('issueForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const title = document.getElementById('issueTitle').value;
+        const description = document.getElementById('issueDescription').value;
+
+        // Here you can process the input data as needed
+        console.log('Issue Title:', title);
+        console.log('Issue Description:', description);
+
+        // For example, send this data to a server or display a confirmation message
+        document.getElementById('feedback').innerHTML = `<p>Thank you for reporting: <strong>${title}</strong></p>`;
+        
+        // Reset the form
+        this.reset();
+    });
+</script>
+
 </body>
 </html>
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
-    margin: 0;
-    padding: 0;
-}
-
-header {
-    background: #333;
-    color: white;
-    padding: 10px;
-    text-align: center;
-}
-
-nav ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-nav ul li {
-    display: inline;
-    margin: 0 15px;
-}
-
-main {
-    padding: 20px;
-}
-
-#3d-scene {
-    width: 100%;
-    height: 400px;
-    background: #eaeaea;
-}
-// script.js
-import * as THREE from 'three';
-
-let scene, camera, renderer;
-
-function init() {
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    
-    renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, 400);
-    document.getElementById('3d-scene').appendChild(renderer.domElement);
-    
-    // Adding a cube
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
-    
-    camera.position.z = 5;
-    
-    animate();
-}
-
-function animate() {
-    requestAnimationFrame(animate);
-    
-    // Rotation Animation
-    scene.children[0].rotation.x += 0.01;
-    scene.children[0].rotation.y += 0.01;
-    
-    renderer.render(scene, camera);
-}
-
-window.onload = init;
