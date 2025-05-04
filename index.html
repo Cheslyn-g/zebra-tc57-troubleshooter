@@ -1,153 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Troubleshooting Assistant</title>
-  <style>
-    body { font-family: Arial; padding: 20px; }
-    .question-box { margin-top: 20px; }
-    button { margin: 5px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Troubleshooting 3D Effects</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Printer Troubleshooting Assistant</h1>
-  <div id="troubleshooting-container"></div>
+    <header>
+        <h1>Interactive Troubleshooting</h1>
+        <nav>
+            <ul>
+                <li><a href="#issue1">Issue 1</a></li>
+                <li><a href="#issue2">Issue 2</a></li>
+                <li><a href="#issue3">Issue 3</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <section id="3d-scene"></section>
+        <section id="troubleshooting-content">
+            <h2>Select an Issue</h2>
+            <div class="issue" id="issue1">
+                <h3>Issue 1</h3>
+                <p>Details about Issue 1...</p>
+            </div>
+            <div class="issue" id="issue2">
+                <h3>Issue 2</h3>
+                <p>Details about Issue 2...</p>
+            </div>
+            <div class="issue" id="issue3">
+                <h3>Issue 3</h3>
+                <p>Details about Issue 3...</p>
+            </div>
+        </section>
+    </main>
 
-  <script>
-    const questions = {
-      start: {
-        text: "Is the printer turning on?",
-        options: [
-          { text: "Yes", next: "paperCheck" },
-          { text: "No", next: "powerIssue" }
-        ]
-      },
-      powerIssue: {
-        text: "Check the power cable. Is it plugged in?",
-        options: [
-          { text: "Yes", next: "callSupport" },
-          { text: "No", next: "plugIn" }
-        ]
-      },
-      plugIn: {
-        text: "Plug in the cable and try turning it on.",
-        options: []
-      },
-      paperCheck: {
-        text: "Is there paper loaded in the tray?",
-        options: [
-          { text: "Yes", next: "jamCheck" },
-          { text: "No", next: "loadPaper" }
-        ]
-      },
-      loadPaper: {
-        text: "Please load paper and try again.",
-        options: []
-      },
-      jamCheck: {
-        text: "Is there a paper jam?",
-        options: [
-          { text: "Yes", next: "clearJam" },
-          { text: "No", next: "callSupport" }
-        ]
-      },
-      clearJam: {
-        text: "Clear the jam and restart the printer.",
-        options: []
-      },
-      callSupport: {
-        text: "Please contact support for further assistance.",
-        options: []
-      }
-    };
-
-    function renderQuestion(key) {
-      const container = document.getElementById("troubleshooting-container");
-      const q = questions[key];
-      container.innerHTML = `<div class="question-box">
-        <p>${q.text}</p>
-        ${q.options.map(opt => `<button onclick="renderQuestion('${opt.next}')">${opt.text}</button>`).join('')}
-      </div>`;
-    }
-
-    renderQuestion("start");
-  </script>
+    <script src="https://threejs.org/build/three.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
 
+header {
+    background: #333;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
 
-<script>
-  const userAnswers = [];
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
 
-  const questions = {
-    start: {
-      text: "Is the printer turning on?",
-      options: [
-        { text: "Yes", next: "paperCheck" },
-        { text: "No", next: "powerIssue" }
-      ]
-    },
-    powerIssue: {
-      text: "Check the power cable. Is it plugged in?",
-      options: [
-        { text: "Yes", next: "callSupport" },
-        { text: "No", next: "plugIn" }
-      ]
-    },
-    plugIn: {
-      text: "Plug in the cable and try turning it on.",
-      options: []
-    },
-    paperCheck: {
-      text: "Is there paper loaded in the tray?",
-      options: [
-        { text: "Yes", next: "jamCheck" },
-        { text: "No", next: "loadPaper" }
-      ]
-    },
-    loadPaper: {
-      text: "Please load paper and try again.",
-      options: []
-    },
-    jamCheck: {
-      text: "Is there a paper jam?",
-      options: [
-        { text: "Yes", next: "clearJam" },
-        { text: "No", next: "callSupport" }
-      ]
-    },
-    clearJam: {
-      text: "Clear the jam and restart the printer.",
-      options: []
-    },
-    callSupport: {
-      text: "Please contact support for further assistance.",
-      options: []
-    }
-  };
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
 
-  function renderQuestion(key) {
-    const container = document.getElementById("troubleshooting-container");
-    const q = questions[key];
-    userAnswers.push(q.text); // Log question
-    container.innerHTML = `<div class="question-box">
-      <p>${q.text}</p>
-      ${q.options.map(opt => `
-        <button onclick="userAnswers.push('Answer: ${opt.text}'); renderQuestion('${opt.next}')">
-          ${opt.text}
-        </button>`).join('')}
-      ${q.options.length === 0 ? `<br><button onclick="downloadLog()">Download My Instructions</button>` : ''}
-    </div>`;
-  }
+main {
+    padding: 20px;
+}
 
-  function downloadLog() {
-    const blob = new Blob([userAnswers.join('\n')], { type: "text/plain" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "My_Troubleshooting_Log.txt";
-    link.click();
-  }
+#3d-scene {
+    width: 100%;
+    height: 400px;
+    background: #eaeaea;
+}
+// script.js
+import * as THREE from 'three';
 
-  renderQuestion("start");
-</script>
+let scene, camera, renderer;
+
+function init() {
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, 400);
+    document.getElementById('3d-scene').appendChild(renderer.domElement);
+    
+    // Adding a cube
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+    
+    camera.position.z = 5;
+    
+    animate();
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    
+    // Rotation Animation
+    scene.children[0].rotation.x += 0.01;
+    scene.children[0].rotation.y += 0.01;
+    
+    renderer.render(scene, camera);
+}
+
+window.onload = init;
